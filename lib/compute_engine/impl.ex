@@ -1090,7 +1090,7 @@ defmodule GCloudex.ComputeEngine.Impl do
           if fields == "" do
             fields
           else
-            %{"fields" => fields}
+            %{"fields" => fields} |> URI.encode_query
           end    
 
         request(
