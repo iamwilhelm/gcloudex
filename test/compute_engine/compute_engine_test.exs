@@ -1,15 +1,15 @@
 defmodule Test.Dummy.ComputeEngine do
   use GCloudex.ComputeEngine.Impl, :compute_engine
-  
+
   @project_id GCloudex.get_project_id
 
-  def request(verb, endpoint, headers, body, query \\ "") do 
+  def request(verb, endpoint, headers, body, query \\ "") do
     %{
       verb: verb,
       endpoint: endpoint,
       body: body,
-      headers: 
-        headers ++ 
+      headers:
+        headers ++
         [
           {"x-goog-project-id", @project_id},
           {"Authorization", "Bearer Dummy Token"}
@@ -19,7 +19,7 @@ defmodule Test.Dummy.ComputeEngine do
   end
 end
 
-defmodule ComputeEngineTest do 
+defmodule ComputeEngineTest do
   use ExUnit.Case, async: true
   alias Test.Dummy.ComputeEngine, as: API
 
@@ -31,7 +31,7 @@ defmodule ComputeEngineTest do
   ### Autoscalers Tests ###
   #########################
 
-  test "list_autoscalers (no fields)" do 
+  test "list_autoscalers (no fields)" do
     zone     = "zone"
     headers  = []
     body     = ""
@@ -41,7 +41,7 @@ defmodule ComputeEngineTest do
     assert expected == API.list_autoscalers zone
   end
 
-  test "list_autoscalers (with fields)" do 
+  test "list_autoscalers (with fields)" do
     zone     = "zone"
     headers  = []
     body     = ""
@@ -50,9 +50,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.list_autoscalers zone, query
-  end  
+  end
 
-  test "get_autoscaler (no fields)" do 
+  test "get_autoscaler (no fields)" do
     zone       = "zone"
     autoscaler = "autoscaler"
     headers    = []
@@ -60,11 +60,11 @@ defmodule ComputeEngineTest do
     _query     = %{}
     endpoint   = @no_zone_ep <> "/zones/#{zone}/autoscalers/#{autoscaler}"
     expected   = build_expected(:get, endpoint, headers, body)
-    
-    assert expected == API.get_autoscaler zone, autoscaler
-  end  
 
-  test "get_autoscaler (with fields)" do 
+    assert expected == API.get_autoscaler zone, autoscaler
+  end
+
+  test "get_autoscaler (with fields)" do
     zone       = "zone"
     autoscaler = "autoscaler"
     headers    = []
@@ -73,22 +73,22 @@ defmodule ComputeEngineTest do
     query      = %{"fields" => fields}
     endpoint   = @no_zone_ep <> "/zones/#{zone}/autoscalers/#{autoscaler}"
     expected   = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
-    
-    assert expected == API.get_autoscaler zone, autoscaler, fields
-  end    
 
-  test "insert_autoscaler (no fields)" do 
+    assert expected == API.get_autoscaler zone, autoscaler, fields
+  end
+
+  test "insert_autoscaler (no fields)" do
     zone       = "zone"
     resource   = %{"name" => "abc", "target" => "def"}
     headers    = [{"Content-Type", "application/json"}]
     body       = resource |> Poison.encode!
     endpoint   = @no_zone_ep <> "/zones/#{zone}/autoscalers"
     expected   = build_expected(:post, endpoint, headers, body)
-    
+
     assert expected == API.insert_autoscaler zone, resource
   end
- 
-  test "insert_autoscaler (with fields)" do 
+
+  test "insert_autoscaler (with fields)" do
     zone       = "zone"
     resource   = %{"name" => "abc", "target" => "def"}
     headers    = [{"Content-Type", "application/json"}]
@@ -97,11 +97,11 @@ defmodule ComputeEngineTest do
     body       = resource |> Poison.encode!
     endpoint   = @no_zone_ep <> "/zones/#{zone}/autoscalers"
     expected   = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
-    
+
     assert expected == API.insert_autoscaler zone, resource, fields
   end
 
-  test "patch_autoscaler (no fields)" do 
+  test "patch_autoscaler (no fields)" do
     zone     = "zone"
     name     = "name"
     resource = %{"field1" => "abc"}
@@ -114,7 +114,7 @@ defmodule ComputeEngineTest do
     assert expected == API.patch_autoscaler zone, name, resource
   end
 
-  test "patch_autoscaler (with fields)" do 
+  test "patch_autoscaler (with fields)" do
     zone     = "zone"
     name     = "name"
     resource = %{"field1" => "abc"}
@@ -126,9 +126,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:patch, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.patch_autoscaler zone, name, resource, fields
-  end  
+  end
 
-  test "update_autoscaler (no fields)" do 
+  test "update_autoscaler (no fields)" do
     zone     = "zone"
     name     = "name"
     resource = %{"field1" => "abc"}
@@ -141,7 +141,7 @@ defmodule ComputeEngineTest do
     assert expected == API.update_autoscaler zone, name, resource
   end
 
-  test "update_autoscaler (with fields)" do 
+  test "update_autoscaler (with fields)" do
     zone     = "zone"
     name     = "name"
     resource = %{"field1" => "abc"}
@@ -153,9 +153,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:put, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.update_autoscaler zone, name, resource, fields
-  end  
+  end
 
-  test "update_autoscaler (no name)" do 
+  test "update_autoscaler (no name)" do
     zone     = "zone"
     name     = ""
     resource = %{"field1" => "abc"}
@@ -167,9 +167,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:put, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.update_autoscaler zone, "", resource, fields
-  end    
+  end
 
-  test "update_autoscaler (no fields no name)" do 
+  test "update_autoscaler (no fields no name)" do
     zone     = "zone"
     name     = ""
     resource = %{"field1" => "abc"}
@@ -180,9 +180,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:put, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.update_autoscaler zone, "", resource
-  end      
+  end
 
-  test "delete_autoscaler (no fields)" do 
+  test "delete_autoscaler (no fields)" do
     zone       = "zone"
     autoscaler = "autoscaler"
     headers    = []
@@ -193,7 +193,7 @@ defmodule ComputeEngineTest do
     assert expected == API.delete_autoscaler zone, autoscaler
   end
 
-  test "delete_autoscaler (with fields)" do 
+  test "delete_autoscaler (with fields)" do
     zone       = "zone"
     autoscaler = "autoscaler"
     headers    = []
@@ -204,9 +204,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:delete, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.delete_autoscaler zone, autoscaler, fields
-  end  
+  end
 
-  test "aggregated_list_of_autoscalers (no query)" do 
+  test "aggregated_list_of_autoscalers (no query)" do
     headers  = []
     body     = ""
     endpoint = @no_zone_ep <> "/aggregated/autoscalers"
@@ -215,7 +215,7 @@ defmodule ComputeEngineTest do
     assert expected == API.aggregated_list_of_autoscalers
   end
 
-  test "aggregated_list_of_autoscalers (with query)" do 
+  test "aggregated_list_of_autoscalers (with query)" do
     headers  = []
     body     = ""
     query    = %{"field1" => "abc", "field2" => "def"}
@@ -223,13 +223,13 @@ defmodule ComputeEngineTest do
     expected = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.aggregated_list_of_autoscalers query
-  end  
+  end
 
   #######################
   ### DiskTypes Tests ###
   #######################
 
-  test "list_disk_types (no query)" do 
+  test "list_disk_types (no query)" do
     zone       = "zone"
     headers    = []
     body       = ""
@@ -239,7 +239,7 @@ defmodule ComputeEngineTest do
     assert expected == API.list_disk_types zone
   end
 
-  test "list_disk_types (with query)" do 
+  test "list_disk_types (with query)" do
     zone       = "zone"
     headers    = []
     body       = ""
@@ -248,9 +248,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.list_disk_types zone, query
-  end  
+  end
 
-  test "get_disk_type (no fields)" do 
+  test "get_disk_type (no fields)" do
     zone       = "zone"
     disk_type  = "disk_type"
     headers    = []
@@ -259,9 +259,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:get, endpoint, headers, body)
 
     assert expected == API.get_disk_type zone, disk_type
-  end  
+  end
 
-  test "get_disk_type (with fields)" do 
+  test "get_disk_type (with fields)" do
     zone       = "zone"
     disk_type  = "disk_type"
     headers    = []
@@ -272,18 +272,18 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.get_disk_type zone, disk_type, fields
-  end    
+  end
 
-  test "aggregated_list_of_disk_types (no query)" do 
+  test "aggregated_list_of_disk_types (no query)" do
     headers    = []
     body       = ""
     endpoint   = @no_zone_ep <> "/aggregated/diskTypes"
     expected   = build_expected(:get, endpoint, headers, body)
 
     assert expected == API.aggregated_list_of_disk_types
-  end 
+  end
 
-  test "aggregated_list_of_disk_types (with query)" do 
+  test "aggregated_list_of_disk_types (with query)" do
     headers    = []
     body       = ""
     query      = %{"field1" => 1, "field2" => 2}
@@ -291,13 +291,13 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.aggregated_list_of_disk_types query
-  end   
+  end
 
   ###################
   ### Disks Tests ###
   ###################
 
-  test "list_disks (no query)" do 
+  test "list_disks (no query)" do
     zone       = "zone"
     headers    = []
     body       = ""
@@ -307,7 +307,7 @@ defmodule ComputeEngineTest do
     assert expected == API.list_disks zone
   end
 
-  test "list_disks (with query)" do 
+  test "list_disks (with query)" do
     zone       = "zone"
     headers    = []
     body       = ""
@@ -316,9 +316,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.list_disks zone, query
-  end  
+  end
 
-  test "get_disk (no fields)" do 
+  test "get_disk (no fields)" do
     zone       = "zone"
     disk       = "disk"
     headers    = []
@@ -327,9 +327,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:get, endpoint, headers, body)
 
     assert expected == API.get_disk zone, disk
-  end  
+  end
 
-  test "get_disk (with fields)" do 
+  test "get_disk (with fields)" do
     zone       = "zone"
     disk       = "disk"
     headers    = []
@@ -340,9 +340,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.get_disk zone, disk, fields
-  end    
+  end
 
-  test "insert_disk (no fields with image)" do 
+  test "insert_disk (no fields with image)" do
     zone       = "zone"
     resource   = %{"name" => "name"}
     source_img = "source_image"
@@ -353,9 +353,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.insert_disk zone, resource, source_img
-  end    
+  end
 
-  test "insert_disk (with fields with image)" do 
+  test "insert_disk (with fields with image)" do
     zone       = "zone"
     resource   = %{"name" => "name"}
     source_img = "source_image"
@@ -367,9 +367,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.insert_disk zone, resource, source_img, fields
-  end      
+  end
 
-  test "insert_disk (with fields no image)" do 
+  test "insert_disk (with fields no image)" do
     zone       = "zone"
     resource   = %{"name" => "name"}
     source_img = ""
@@ -381,9 +381,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.insert_disk zone, resource, source_img, fields
-  end        
+  end
 
-  test "insert_disk (no fields no image)" do 
+  test "insert_disk (no fields no image)" do
     zone       = "zone"
     resource   = %{"name" => "name"}
     source_img = ""
@@ -394,9 +394,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.insert_disk zone, resource, source_img
-  end   
+  end
 
-  test "delete_disk (no fields)" do 
+  test "delete_disk (no fields)" do
     zone       = "zone"
     disk       = "disk"
     headers    = []
@@ -405,9 +405,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:delete, endpoint, headers, body)
 
     assert expected == API.delete_disk zone, disk
-  end      
+  end
 
-  test "delete_disk (with fields)" do 
+  test "delete_disk (with fields)" do
     zone       = "zone"
     disk       = "disk"
     headers    = []
@@ -418,9 +418,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:delete, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.delete_disk zone, disk, fields
-  end        
+  end
 
-  test "resize_disk (no fields)" do 
+  test "resize_disk (no fields)" do
     zone       = "zone"
     disk       = "disk"
     size       = 10
@@ -430,9 +430,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:post, endpoint, headers, body)
 
     assert expected == API.resize_disk zone, disk, size
-  end        
+  end
 
-  test "resize_disk (with fields)" do 
+  test "resize_disk (with fields)" do
     zone       = "zone"
     disk       = "disk"
     size       = 10
@@ -444,18 +444,18 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.resize_disk zone, disk, size, fields
-  end 
+  end
 
-  test "aggregated_list_of_disks (no query)" do 
+  test "aggregated_list_of_disks (no query)" do
     headers    = []
     body       = ""
     endpoint   = @no_zone_ep <> "/aggregated/disks"
     expected   = build_expected(:get, endpoint, headers, body)
 
     assert expected == API.aggregated_list_of_disks
-  end 
+  end
 
-  test "aggregated_list_of_disks (with query)" do 
+  test "aggregated_list_of_disks (with query)" do
     headers    = []
     body       = ""
     query      = %{"field1" => 1, "field2" => 2}
@@ -463,9 +463,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.aggregated_list_of_disks query
-  end  
+  end
 
-  test "create_snapshot (no fields)" do 
+  test "create_snapshot (no fields)" do
     zone       = "zone"
     disk       = "disk"
     resource   = %{"abc" => 1, "def" => 2}
@@ -477,7 +477,7 @@ defmodule ComputeEngineTest do
     assert expected == API.create_snapshot zone, disk, resource
   end
 
-  test "create_snapshot (with fields)" do 
+  test "create_snapshot (with fields)" do
     zone       = "zone"
     disk       = "disk"
     resource   = %{"abc" => 1, "def" => 2}
@@ -489,13 +489,13 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.create_snapshot zone, disk, resource, fields
-  end  
+  end
 
   #######################
   ### Firewalls Tests ###
   #######################
 
-  test "list_firewalls (no query)" do 
+  test "list_firewalls (no query)" do
     headers    = []
     body       = ""
     endpoint   = @no_zone_ep <> "/global/firewalls"
@@ -504,7 +504,7 @@ defmodule ComputeEngineTest do
     assert expected == API.list_firewalls
   end
 
-  test "list_firewalls (with query)" do 
+  test "list_firewalls (with query)" do
     headers    = []
     body       = ""
     query      = %{"a" => 1, "b" => 2}
@@ -512,9 +512,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.list_firewalls query
-  end  
+  end
 
-  test "get_firewall (no fields)" do 
+  test "get_firewall (no fields)" do
     firewall   = "firewall"
     headers    = []
     body       = ""
@@ -524,7 +524,7 @@ defmodule ComputeEngineTest do
     assert expected == API.get_firewall firewall
   end
 
-  test "get_firewall (with fields)" do 
+  test "get_firewall (with fields)" do
     firewall   = "firewall"
     headers    = []
     body       = ""
@@ -534,9 +534,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.get_firewall firewall, fields
-  end  
+  end
 
-  test "insert_firewall (no fields)" do 
+  test "insert_firewall (no fields)" do
     resource = %{"abc" => 1, "def" => 2}
     headers  = [{"Content-Type", "application/json"}]
     body     = resource |> Poison.encode!
@@ -546,7 +546,7 @@ defmodule ComputeEngineTest do
     assert expected == API.insert_firewall resource
   end
 
-  test "insert_firewall (with fields)" do 
+  test "insert_firewall (with fields)" do
     resource = %{"abc" => 1, "def" => 2}
     headers  = [{"Content-Type", "application/json"}]
     body     = resource |> Poison.encode!
@@ -556,9 +556,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.insert_firewall resource, fields
-  end  
+  end
 
-  test "patch_firewall (no fields)" do 
+  test "patch_firewall (no fields)" do
     firewall = "firewall"
     resource = %{"abc" => 1, "def" => 2}
     headers  = [{"Content-Type", "application/json"}]
@@ -567,9 +567,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:patch, endpoint, headers, body)
 
     assert expected == API.patch_firewall firewall, resource
-  end  
+  end
 
-  test "patch_firewall (with fields)" do 
+  test "patch_firewall (with fields)" do
     firewall = "firewall"
     resource = %{"abc" => 1, "def" => 2}
     headers  = [{"Content-Type", "application/json"}]
@@ -580,9 +580,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:patch, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.patch_firewall firewall, resource, fields
-  end    
+  end
 
-  test "update_firewall (no fields)" do 
+  test "update_firewall (no fields)" do
     firewall = "firewall"
     resource = %{"abc" => 1, "def" => 2}
     headers  = [{"Content-Type", "application/json"}]
@@ -591,9 +591,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:put, endpoint, headers, body)
 
     assert expected == API.update_firewall firewall, resource
-  end  
+  end
 
-  test "update_firewall (with fields)" do 
+  test "update_firewall (with fields)" do
     firewall = "firewall"
     resource = %{"abc" => 1, "def" => 2}
     headers  = [{"Content-Type", "application/json"}]
@@ -604,9 +604,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:put, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.update_firewall firewall, resource, fields
-  end 
+  end
 
-  test "delete_firewall (no fields)" do 
+  test "delete_firewall (no fields)" do
     firewall = "firewall"
     headers  = []
     body     = ""
@@ -614,9 +614,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:delete, endpoint, headers, body)
 
     assert expected == API.delete_firewall firewall
-  end    
+  end
 
-  test "delete_firewall (with fields)" do 
+  test "delete_firewall (with fields)" do
     firewall = "firewall"
     headers  = []
     body     = ""
@@ -625,14 +625,14 @@ defmodule ComputeEngineTest do
     endpoint = @no_zone_ep <> "/global/firewalls/#{firewall}"
     expected = build_expected(:delete, endpoint, headers, body, query |> URI.encode_query)
 
-    assert expected == API.delete_firewall firewall, fields 
-  end      
+    assert expected == API.delete_firewall firewall, fields
+  end
 
   ####################
   ### Images Tests ###
   ####################
 
-  test "list_images (no query)" do 
+  test "list_images (no query)" do
     headers    = []
     body       = ""
     endpoint   = @no_zone_ep <> "/global/images"
@@ -641,7 +641,7 @@ defmodule ComputeEngineTest do
     assert expected == API.list_images
   end
 
-  test "list_images (with query)" do 
+  test "list_images (with query)" do
     headers    = []
     body       = ""
     query      = %{"abc" => 1, "def" => 2}
@@ -651,7 +651,7 @@ defmodule ComputeEngineTest do
     assert expected == API.list_images query
   end
 
-  test "get_image (no fields)" do 
+  test "get_image (no fields)" do
     image      = "image"
     headers    = []
     body       = ""
@@ -659,9 +659,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:get, endpoint, headers, body)
 
     assert expected == API.get_image image
-  end  
+  end
 
-  test "get_image (with fields)" do 
+  test "get_image (with fields)" do
     image      = "image"
     headers    = []
     body       = ""
@@ -669,9 +669,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:get, endpoint, headers, body)
 
     assert expected == API.get_image image
-  end    
+  end
 
-  test "insert_image_with_resource (no fields)" do 
+  test "insert_image_with_resource (no fields)" do
     resource   = %{"abc" => 1, "def" => 2}
     headers    = [{"Content-Type", "application/json"}]
     body       = resource |> Poison.encode!
@@ -679,9 +679,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:post, endpoint, headers, body)
 
     assert expected == API.insert_image_with_resource resource
-  end    
+  end
 
-  test "insert_image_with_resource (with fields)" do 
+  test "insert_image_with_resource (with fields)" do
     resource   = %{"abc" => 1, "def" => 2}
     headers    = [{"Content-Type", "application/json"}]
     body       = resource |> Poison.encode!
@@ -691,9 +691,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.insert_image_with_resource resource, fields
-  end      
+  end
 
-  test "insert_image (no fields)" do 
+  test "insert_image (no fields)" do
     name       = "name"
     url        = "url"
     headers    = [{"Content-Type", "application/json"}]
@@ -702,9 +702,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:post, endpoint, headers, body)
 
     assert expected == API.insert_image name, url
-  end    
+  end
 
-  test "insert_image (with fields)" do 
+  test "insert_image (with fields)" do
     name       = "name"
     url        = "url"
     headers    = [{"Content-Type", "application/json"}]
@@ -715,9 +715,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.insert_image name, url, fields
-  end      
+  end
 
-  test "delete_image (no fields)" do 
+  test "delete_image (no fields)" do
     image      = "image"
     headers    = []
     body       = ""
@@ -725,9 +725,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:delete, endpoint, headers, body)
 
     assert expected == API.delete_image image
-  end   
+  end
 
-  test "delete_image (with fields)" do 
+  test "delete_image (with fields)" do
     image      = "image"
     headers    = []
     body       = ""
@@ -737,9 +737,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:delete, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.delete_image image, fields
-  end     
+  end
 
-  test "deprecate_image (no fields)" do 
+  test "deprecate_image (no fields)" do
     image      = "image"
     request    = %{"abc" => 1, "def" => 2}
     headers    = [{"Content-Type", "application/json"}]
@@ -748,26 +748,26 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:post, endpoint, headers, body)
 
     assert expected == API.deprecate_image image, request
-  end   
+  end
 
-  test "deprecate_image (with fields)" do 
+  test "deprecate_image (with fields)" do
     image      = "image"
     request    = %{"abc" => 1, "def" => 2}
     headers    = [{"Content-Type", "application/json"}]
     body       = request |> Poison.encode!
     fields     = "a,b,c"
-    query      = %{"fields" => fields} 
+    query      = %{"fields" => fields}
     endpoint   = @no_zone_ep <> "/global/images/#{image}/deprecate"
     expected   = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.deprecate_image image, request, fields
-  end     
+  end
 
   ############################
   ### InstanceGroups Tests ###
   ############################
 
-  test "list_instance_groups (no query)" do 
+  test "list_instance_groups (no query)" do
     zone       = "zone"
     headers    = []
     body       = ""
@@ -777,7 +777,7 @@ defmodule ComputeEngineTest do
     assert expected == API.list_instance_groups zone
   end
 
-  test "list_instance_groups (with query)" do 
+  test "list_instance_groups (with query)" do
     zone       = "zone"
     headers    = []
     body       = ""
@@ -788,7 +788,7 @@ defmodule ComputeEngineTest do
     assert expected == API.list_instance_groups zone, query
   end
 
-  test "list_instances_in_group (no query)" do 
+  test "list_instances_in_group (no query)" do
     zone       = "zone"
     group      = "group"
     state      = "state"
@@ -800,7 +800,7 @@ defmodule ComputeEngineTest do
     assert expected == API.list_instances_in_group zone, group, state
   end
 
-  test "list_instances_in_group (with) query)" do 
+  test "list_instances_in_group (with) query)" do
     zone       = "zone"
     group      = "group"
     state      = "state"
@@ -813,7 +813,7 @@ defmodule ComputeEngineTest do
     assert expected == API.list_instances_in_group zone, group, state, query
   end
 
-  test "get_instance_group (no fields)" do 
+  test "get_instance_group (no fields)" do
     zone       = "zone"
     group      = "group"
     headers    = []
@@ -822,9 +822,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:get, endpoint, headers, body)
 
     assert expected == API.get_instance_group zone, group
-  end    
+  end
 
-  test "get_instance_group (with fields)" do 
+  test "get_instance_group (with fields)" do
     zone       = "zone"
     group      = "group"
     headers    = []
@@ -835,9 +835,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.get_instance_group zone, group, fields
-  end      
+  end
 
-  test "insert_instance_group (no fields)" do 
+  test "insert_instance_group (no fields)" do
     zone       = "zone"
     resource   = %{"abc" => 1, "def" => 2}
     headers    = [{"Content-Type", "application/json"}]
@@ -846,9 +846,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:post, endpoint, headers, body)
 
     assert expected == API.insert_instance_group zone, resource
-  end   
+  end
 
-  test "insert_instance_group (with fields)" do 
+  test "insert_instance_group (with fields)" do
     zone       = "zone"
     resource   = %{"abc" => 1, "def" => 2}
     headers    = [{"Content-Type", "application/json"}]
@@ -859,9 +859,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.insert_instance_group zone, resource, fields
-  end  
+  end
 
-  test "delete_instance_group (no fields)" do 
+  test "delete_instance_group (no fields)" do
     zone       = "zone"
     group      = "group"
     headers    = []
@@ -870,9 +870,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:get, endpoint, headers, body)
 
     assert expected == API.get_instance_group zone, group
-  end   
+  end
 
-  test "delete_instance_group (with fields)" do 
+  test "delete_instance_group (with fields)" do
     zone       = "zone"
     group      = "group"
     headers    = []
@@ -883,18 +883,18 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.get_instance_group zone, group, fields
-  end     
+  end
 
-  test "aggregated_list_of_instance_groups (no query)" do 
+  test "aggregated_list_of_instance_groups (no query)" do
     headers    = []
     body       = ""
     endpoint   = @no_zone_ep <> "/aggregated/instanceGroups"
     expected   = build_expected(:get, endpoint, headers, body)
 
     assert expected == API.aggregated_list_of_instance_groups
-  end 
+  end
 
-  test "aggregated_list_of_instance_groups (with query)" do 
+  test "aggregated_list_of_instance_groups (with query)" do
     headers    = []
     body       = ""
     endpoint   = @no_zone_ep <> "/aggregated/instanceGroups"
@@ -902,9 +902,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.aggregated_list_of_instance_groups query
-  end 
+  end
 
-  test "add_instances_to_group (no fields)" do 
+  test "add_instances_to_group (no fields)" do
     zone       = "zone"
     group      = "group"
     instances  = ["a", "b", "c"]
@@ -920,9 +920,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:post, endpoint, headers, body)
 
     assert expected == API.add_instances_to_group zone, group, instances
-  end   
+  end
 
-  test "add_instances_to_group (with fields)" do 
+  test "add_instances_to_group (with fields)" do
     zone       = "zone"
     group      = "group"
     instances  = ["a", "b", "c"]
@@ -940,9 +940,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.add_instances_to_group zone, group, instances, fields
-  end     
+  end
 
-  test "remove_instances_from_group (no fields)" do 
+  test "remove_instances_from_group (no fields)" do
     zone       = "zone"
     group      = "group"
     instances  = ["a", "b", "c"]
@@ -958,9 +958,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:post, endpoint, headers, body)
 
     assert expected == API.remove_instances_from_group zone, group, instances
-  end     
+  end
 
-  test "remove_instances_from_group (with fields)" do 
+  test "remove_instances_from_group (with fields)" do
     zone       = "zone"
     group      = "group"
     instances  = ["a", "b", "c"]
@@ -978,9 +978,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.remove_instances_from_group zone, group, instances, fields
-  end     
+  end
 
-  test "set_named_ports_for_group (no fields)" do 
+  test "set_named_ports_for_group (no fields)" do
     zone       = "zone"
     group      = "group"
     fp         = "fingerprint"
@@ -998,9 +998,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:post, endpoint, headers, body)
 
     assert expected == API.set_named_ports_for_group zone, group, ports, fp
-  end   
+  end
 
-  test "set_named_ports_for_group (with fields)" do 
+  test "set_named_ports_for_group (with fields)" do
     zone       = "zone"
     group      = "group"
     fp         = "fingerprint"
@@ -1020,13 +1020,13 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:post, endpoint, headers, body)
 
     assert expected == API.set_named_ports_for_group zone, group, ports, fp
-  end     
+  end
 
   #######################
   ### Instances Tests ###
   #######################
 
-  test "list_instances (no query)" do 
+  test "list_instances (no query)" do
     zone     = "zone"
     headers  = []
     body     = ""
@@ -1036,7 +1036,7 @@ defmodule ComputeEngineTest do
     assert expected == API.list_instances zone
   end
 
-  test "list_instances (with query)" do 
+  test "list_instances (with query)" do
     zone     = "zone"
     headers  = []
     body     = ""
@@ -1047,7 +1047,7 @@ defmodule ComputeEngineTest do
     assert expected == API.list_instances zone, query
   end
 
-  test "get_instance (no fields)" do 
+  test "get_instance (no fields)" do
     zone     = "zone"
     instance = "instance"
     headers  = []
@@ -1056,9 +1056,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:get, endpoint, headers, body)
 
     assert expected == API.get_instance zone, instance
-  end    
+  end
 
-  test "get_instance (with fields)" do 
+  test "get_instance (with fields)" do
     zone     = "zone"
     instance = "instance"
     headers  = []
@@ -1069,9 +1069,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.get_instance zone, instance, fields
-  end     
+  end
 
-  test "insert_instance (no fields)" do 
+  test "insert_instance (no fields)" do
     zone     = "zone"
     resource = %{"abc" => 1, "def" => 2}
     headers  = [{"Content-Type", "application/json"}]
@@ -1080,9 +1080,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:post, endpoint, headers, body)
 
     assert expected == API.insert_instance zone, resource
-  end  
+  end
 
-  test "insert_instance (with fields)" do 
+  test "insert_instance (with fields)" do
     zone     = "zone"
     resource = %{"abc" => 1, "def" => 2}
     headers  = [{"Content-Type", "application/json"}]
@@ -1093,9 +1093,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.insert_instance zone, resource, fields
-  end    
+  end
 
-  test "delete_instance (no fields)" do 
+  test "delete_instance (no fields)" do
     zone     = "zone"
     instance = "instance"
     headers  = []
@@ -1104,9 +1104,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:delete, endpoint, headers, body)
 
     assert expected == API.delete_instance zone, instance
-  end  
+  end
 
-  test "delete_instance (with fields)" do 
+  test "delete_instance (with fields)" do
     zone     = "zone"
     instance = "instance"
     headers  = []
@@ -1117,9 +1117,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:delete, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.delete_instance zone, instance, fields
-  end  
+  end
 
-  test "start_instance (no fields)" do 
+  test "start_instance (no fields)" do
     zone     = "zone"
     instance = "instance"
     headers  = [{"Content-Type", "application/json"}]
@@ -1128,9 +1128,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:post, endpoint, headers, body)
 
     assert expected == API.start_instance zone, instance
-  end  
+  end
 
-  test "start_instance (with fields)" do 
+  test "start_instance (with fields)" do
     zone     = "zone"
     instance = "instance"
     headers  = [{"Content-Type", "application/json"}]
@@ -1141,9 +1141,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.start_instance zone, instance, fields
-  end  
+  end
 
-  test "stop_instance (no fields)" do 
+  test "stop_instance (no fields)" do
     zone     = "zone"
     instance = "instance"
     headers  = [{"Content-Type", "application/json"}]
@@ -1152,9 +1152,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:post, endpoint, headers, body)
 
     assert expected == API.stop_instance zone, instance
-  end  
+  end
 
-  test "stop_instance (with fields)" do 
+  test "stop_instance (with fields)" do
     zone     = "zone"
     instance = "instance"
     headers  = [{"Content-Type", "application/json"}]
@@ -1165,9 +1165,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.stop_instance zone, instance, fields
-  end  
+  end
 
-  test "reset_instance (no fields)" do 
+  test "reset_instance (no fields)" do
     zone     = "zone"
     instance = "instance"
     headers  = [{"Content-Type", "application/json"}]
@@ -1176,9 +1176,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:post, endpoint, headers, body)
 
     assert expected == API.reset_instance zone, instance
-  end  
+  end
 
-  test "reset_instance (with fields)" do 
+  test "reset_instance (with fields)" do
     zone     = "zone"
     instance = "instance"
     headers  = [{"Content-Type", "application/json"}]
@@ -1189,9 +1189,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.reset_instance zone, instance, fields
-  end  
+  end
 
-  test "add_access_config (no fields with nat)" do 
+  test "add_access_config (no fields with nat)" do
     zone      = "zone"
     instance  = "instance"
     interface = "interface"
@@ -1209,9 +1209,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.add_access_config zone, instance, interface, name, nat
-  end    
+  end
 
-  test "add_access_config (no fields no nat)" do 
+  test "add_access_config (no fields no nat network_interface)" do
     zone      = "zone"
     instance  = "instance"
     interface = "interface"
@@ -1228,9 +1228,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.add_access_config zone, instance, interface, name, nat
-  end      
+  end
 
-  test "add_access_config (with fields with nat)" do 
+  test "add_access_config (with fields with nat)" do
     zone      = "zone"
     instance  = "instance"
     interface = "interface"
@@ -1249,9 +1249,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.add_access_config zone, instance, interface, name, nat, fields
-  end      
+  end
 
-  test "add_access_config (no fields no nat)" do 
+  test "add_access_config (no fields no nat)" do
     zone      = "zone"
     instance  = "instance"
     interface = "interface"
@@ -1269,9 +1269,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.add_access_config zone, instance, interface, name, nat
-  end        
+  end
 
-  test "delete_access_config (no fields)" do 
+  test "delete_access_config (no fields)" do
     zone      = "zone"
     instance  = "instance"
     interface = "interface"
@@ -1283,9 +1283,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.delete_access_config zone, instance, config, interface
-  end   
+  end
 
-  test "delete_access_config (with fields)" do 
+  test "delete_access_config (with fields)" do
     zone      = "zone"
     instance  = "instance"
     interface = "interface"
@@ -1293,8 +1293,8 @@ defmodule ComputeEngineTest do
     headers   = [{"Content-Type", "application/json"}]
     fields    = "a,b,c"
     query     = %{
-      "networkInterface" => interface, 
-      "accessConfig"     => config, 
+      "networkInterface" => interface,
+      "accessConfig"     => config,
       "fields"           => fields
     }
     body      = ""
@@ -1302,9 +1302,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.delete_access_config zone, instance, config, interface, fields
-  end     
+  end
 
-  test "aggregated_list_of_instances (no query)" do 
+  test "aggregated_list_of_instances (no query)" do
     headers  = []
     body     = ""
     endpoint = @no_zone_ep <> "/aggregated/instances"
@@ -1313,7 +1313,7 @@ defmodule ComputeEngineTest do
     assert expected == API.aggregated_list_of_instances
   end
 
-  test "aggregated_list_of_instances (with query)" do 
+  test "aggregated_list_of_instances (with query)" do
     headers  = []
     body     = ""
     query    = %{"abc" => 1, "def" => 2}
@@ -1321,9 +1321,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.aggregated_list_of_instances query
-  end  
+  end
 
-  test "attach_disk (no fields)" do 
+  test "attach_disk (no fields)" do
     zone      = "zone"
     instance  = "instance"
     resource  = %{"abc" => 1, "def" => 2}
@@ -1333,9 +1333,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:post, endpoint, headers, body)
 
     assert expected == API.attach_disk zone, instance, resource
-  end     
+  end
 
-  test "attach_disk (with fields)" do 
+  test "attach_disk (with fields)" do
     zone      = "zone"
     instance  = "instance"
     resource  = %{"abc" => 1, "def" => 2}
@@ -1347,9 +1347,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.attach_disk zone, instance, resource, fields
-  end       
+  end
 
-  test "detach_disk (no fields)" do 
+  test "detach_disk (no fields)" do
     zone      = "zone"
     instance  = "instance"
     device    = "device"
@@ -1360,9 +1360,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.detach_disk zone, instance, device
-  end     
+  end
 
-  test "detach_disk (with fields)" do 
+  test "detach_disk (with fields)" do
     zone      = "zone"
     instance  = "instance"
     device    = "device"
@@ -1374,9 +1374,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.detach_disk zone, instance, device, fields
-  end            
+  end
 
-  test "set_disk_auto_delete (no fields)" do 
+  test "set_disk_auto_delete (no fields)" do
     zone      = "zone"
     instance  = "instance"
     delete    = true
@@ -1388,9 +1388,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.set_disk_auto_delete zone, instance, delete, device
-  end    
+  end
 
-  test "set_disk_auto_delete (with fields)" do 
+  test "set_disk_auto_delete (with fields)" do
     zone      = "zone"
     instance  = "instance"
     delete    = true
@@ -1399,7 +1399,7 @@ defmodule ComputeEngineTest do
     body      = ""
     fields    = "a,b,c"
     query     = %{
-      "deviceName" => device, 
+      "deviceName" => device,
       "autoDelete" => delete,
       "fields"     => fields
     }
@@ -1407,9 +1407,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.set_disk_auto_delete zone, instance, delete, device, fields
-  end      
+  end
 
-  test "get_serial_port_output (no fields)" do 
+  test "get_serial_port_output (no fields)" do
     zone      = "zone"
     instance  = "instance"
     port      = 1
@@ -1420,9 +1420,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.get_serial_port_output zone, instance, port
-  end    
+  end
 
-  test "get_serial_port_output (with fields)" do 
+  test "get_serial_port_output (with fields)" do
     zone      = "zone"
     instance  = "instance"
     port      = 1
@@ -1434,9 +1434,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.get_serial_port_output zone, instance, port, fields
-  end      
+  end
 
-  test "set_machine_type (no fields)" do 
+  test "set_machine_type (no fields)" do
     zone      = "zone"
     instance  = "instance"
     type      = "type"
@@ -1446,9 +1446,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:post, endpoint, headers, body)
 
     assert expected == API.set_machine_type zone, instance, type
-  end     
+  end
 
-  test "set_machine_type (with fields)" do 
+  test "set_machine_type (with fields)" do
     zone      = "zone"
     instance  = "instance"
     type      = "type"
@@ -1460,9 +1460,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.set_machine_type zone, instance, type, fields
-  end    
+  end
 
-  test "set_metadata (no fields)" do 
+  test "set_metadata (no fields)" do
     zone      = "zone"
     instance  = "instance"
     fp        = "fingerprint"
@@ -1480,9 +1480,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:post, endpoint, headers, body)
 
     assert expected == API.set_metadata zone, instance, fp, items
-  end     
+  end
 
-  test "set_metadata (no fields)" do 
+  test "set_metadata (with fields)" do
     zone      = "zone"
     instance  = "instance"
     fp        = "fingerprint"
@@ -1502,9 +1502,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.set_metadata zone, instance, fp, items, fields
-  end       
+  end
 
-  test "set_scheduling (no fields)" do 
+  test "set_scheduling (no fields)" do
     zone      = "zone"
     instance  = "instance"
     on_host   = "abc"
@@ -1520,9 +1520,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:post, endpoint, headers, body)
 
     assert expected == API.set_scheduling zone, instance, {on_host, restart, pre}
-  end     
+  end
 
-  test "set_scheduling (with fields)" do 
+  test "set_scheduling (with fields)" do
     zone      = "zone"
     instance  = "instance"
     on_host   = "abc"
@@ -1540,9 +1540,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.set_scheduling zone, instance, {on_host, restart, pre}, fields
-  end       
+  end
 
-  test "set_tags (no fields)" do 
+  test "set_tags (no fields)" do
     zone      = "zone"
     instance  = "instance"
     fp        = "fingerprint"
@@ -1556,9 +1556,9 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:post, endpoint, headers, body)
 
     assert expected == API.set_tags zone, instance, fp, items
-  end    
+  end
 
-  test "set_tags (with fields)" do 
+  test "set_tags (with fields)" do
     zone      = "zone"
     instance  = "instance"
     fp        = "fingerprint"
@@ -1574,13 +1574,13 @@ defmodule ComputeEngineTest do
     expected  = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.set_tags zone, instance, fp, items, fields
-  end      
+  end
 
   ######################
   ### Licenses Tests ###
   ######################
 
-  test "get_license (no fields)" do 
+  test "get_license (no fields)" do
     license  = "license"
     headers  = []
     body     = ""
@@ -1588,9 +1588,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:get, endpoint, headers, body)
 
     assert expected == API.get_license license
-  end     
+  end
 
-  test "get_license (with fields)" do 
+  test "get_license (with fields)" do
     license  = "license"
     headers  = []
     body     = ""
@@ -1600,13 +1600,13 @@ defmodule ComputeEngineTest do
     expected = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.get_license license, fields
-  end       
+  end
 
   #####################
   ### Regions Tests ###
   #####################
 
-  test "list_regions (no query)" do 
+  test "list_regions (no query)" do
     headers    = []
     body       = ""
     endpoint   = @no_zone_ep <> "/regions"
@@ -1615,7 +1615,7 @@ defmodule ComputeEngineTest do
     assert expected == API.list_regions
   end
 
-  test "list_regions (with query)" do 
+  test "list_regions (with query)" do
     headers    = []
     body       = ""
     query      = %{"abc" => 1, "def" => 2}
@@ -1625,7 +1625,7 @@ defmodule ComputeEngineTest do
     assert expected == API.list_regions query
   end
 
-  test "get_region (no fields)" do 
+  test "get_region (no fields)" do
     region   = "region"
     headers  = []
     body     = ""
@@ -1633,9 +1633,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:get, endpoint, headers, body)
 
     assert expected == API.get_region region
-  end    
+  end
 
-  test "get_region (with fields)" do 
+  test "get_region (with fields)" do
     region   = "region"
     headers  = []
     body     = ""
@@ -1645,13 +1645,13 @@ defmodule ComputeEngineTest do
     expected = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.get_region region, fields
-  end      
+  end
 
   ##########################
   ### MachineTypes Tests ###
   ##########################
 
-  test "list_machine_types (no query)" do 
+  test "list_machine_types (no query)" do
     zone     = "zone"
     headers  = []
     body     = ""
@@ -1661,7 +1661,7 @@ defmodule ComputeEngineTest do
     assert expected == API.list_machine_types zone
   end
 
-  test "list_machine_types (with query)" do 
+  test "list_machine_types (with query)" do
     zone     = "zone"
     headers  = []
     body     = ""
@@ -1670,9 +1670,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.list_machine_types zone, query
-  end  
+  end
 
-  test "get_machine_type (no fields)" do 
+  test "get_machine_type (no fields)" do
     zone     = "zone"
     type     = "machine_type"
     headers  = []
@@ -1681,9 +1681,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:get, endpoint, headers, body)
 
     assert expected == API.get_machine_type zone, type
-  end    
+  end
 
-  test "get_machine_type (with fields)" do 
+  test "get_machine_type (with fields)" do
     zone     = "zone"
     type     = "machine_type"
     headers  = []
@@ -1694,18 +1694,18 @@ defmodule ComputeEngineTest do
     expected = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.get_machine_type zone, type, fields
-  end      
+  end
 
-  test "aggregated_list_of_machine_types (no query)" do 
+  test "aggregated_list_of_machine_types (no query)" do
     headers    = []
     body       = ""
     endpoint   = @no_zone_ep <> "/aggregated/machineTypes"
     expected   = build_expected(:get, endpoint, headers, body)
 
     assert expected == API.aggregated_list_of_machine_types
-  end 
+  end
 
-  test "aggregated_list_of_machine_types (with query)" do 
+  test "aggregated_list_of_machine_types (with query)" do
     headers    = []
     body       = ""
     query      = %{"abc" => 1, "def" => 2}
@@ -1713,13 +1713,13 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.aggregated_list_of_machine_types query
-  end   
+  end
 
   ######################
   ### Networks Tests ###
   ######################
 
-  test "list_networks (no query)" do 
+  test "list_networks (no query)" do
     headers    = []
     body       = ""
     endpoint   = @no_zone_ep <> "/global/networks"
@@ -1728,7 +1728,7 @@ defmodule ComputeEngineTest do
     assert expected == API.list_networks
   end
 
-  test "list_networks (with query)" do 
+  test "list_networks (with query)" do
     headers    = []
     body       = ""
     query      = %{"abc" => 1, "def" => 2}
@@ -1736,9 +1736,9 @@ defmodule ComputeEngineTest do
     expected   = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.list_networks query
-  end  
+  end
 
-  test "get_network (no fields)" do 
+  test "get_network (no fields)" do
     network  = "network"
     headers  = []
     body     = ""
@@ -1746,9 +1746,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:get, endpoint, headers, body)
 
     assert expected == API.get_network network
-  end      
+  end
 
-  test "get_network (with fields)" do 
+  test "get_network (with fields)" do
     network  = "network"
     headers  = []
     body     = ""
@@ -1758,9 +1758,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.get_network network, fields
-  end  
+  end
 
-  test "insert_network (no fields)" do 
+  test "insert_network (no fields)" do
     resource = %{"abc" => 1, "def" => 2}
     headers  = [{"Content-Type", "application/json"}]
     body     = resource |> Poison.encode!
@@ -1768,9 +1768,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:post, endpoint, headers, body)
 
     assert expected == API.insert_network resource
-  end            
+  end
 
-  test "insert_network (with fields)" do 
+  test "insert_network (with fields)" do
     resource = %{"abc" => 1, "def" => 2}
     headers  = [{"Content-Type", "application/json"}]
     body     = resource |> Poison.encode!
@@ -1780,9 +1780,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:post, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.insert_network resource, fields
-  end            
+  end
 
-  test "delete_network (no fields)" do 
+  test "delete_network (no fields)" do
     network  = "network"
     headers  = []
     body     = ""
@@ -1790,9 +1790,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:delete, endpoint, headers, body)
 
     assert expected == API.delete_network network
-  end     
+  end
 
-  test "delete_network (with fields)" do 
+  test "delete_network (with fields)" do
     network  = "network"
     headers  = []
     body     = ""
@@ -1802,13 +1802,13 @@ defmodule ComputeEngineTest do
     expected = build_expected(:delete, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.delete_network network, fields
-  end       
+  end
 
   ###################
   ### Zones Tests ###
   ###################
 
-  test "list_zones (no query)" do 
+  test "list_zones (no query)" do
     headers    = []
     body       = ""
     endpoint   = @no_zone_ep <> "/zones"
@@ -1817,7 +1817,7 @@ defmodule ComputeEngineTest do
     assert expected == API.list_zones
   end
 
-  test "list_zones (with query)" do 
+  test "list_zones (with query)" do
     headers    = []
     body       = ""
     query      = %{"abc" => 1, "def" => 2}
@@ -1827,7 +1827,7 @@ defmodule ComputeEngineTest do
     assert expected == API.list_zones query
   end
 
-  test "get_zone (no fields)" do 
+  test "get_zone (no fields)" do
     zone     = "zone"
     headers  = []
     body     = ""
@@ -1835,9 +1835,9 @@ defmodule ComputeEngineTest do
     expected = build_expected(:get, endpoint, headers, body)
 
     assert expected == API.get_zone zone
-  end    
+  end
 
-  test "get_zone (with fields)" do 
+  test "get_zone (with fields)" do
     zone     = "zone"
     headers  = []
     body     = ""
@@ -1847,7 +1847,7 @@ defmodule ComputeEngineTest do
     expected = build_expected(:get, endpoint, headers, body, query |> URI.encode_query)
 
     assert expected == API.get_zone zone, fields
-  end   
+  end
 
   ###############
   ### Helpers ###
@@ -1855,10 +1855,10 @@ defmodule ComputeEngineTest do
 
   defp build_expected(verb, host, headers, body, query \\ "") do
     %{
-      verb: verb, 
-      endpoint: host, 
-      headers: 
-        headers ++         
+      verb: verb,
+      endpoint: host,
+      headers:
+        headers ++
         [
           {"x-goog-project-id", @project_id},
           {"Authorization", "Bearer Dummy Token"}
